@@ -6,6 +6,7 @@ from seq_cluster.clustering.simple_abs_distance_calculator import SimpleAbsDista
 from seq_cluster.clustering.v_j_cost_calculator import VJCostCalculator
 from seq_cluster.clustering.sequence_distance_calculator import SequenceDistanceCalculator
 from seq_cluster.data.data_set import Dataset
+from seq_cluster.distances.fast_levenshtein_calculator import FastLevenshteinCalculator
 from seq_cluster.distances.peptide_mhc_matrix import PeptideMhcMatrix
 from seq_cluster.visualization.clustermap_visualizer import ClustermapVisualizer
 
@@ -22,16 +23,22 @@ def run(args, logger):
         subst_matrix = IdentityDistanceMatrix()
     elif args.subst_matrix == 'peptide_mhc_matrix':
         subst_matrix = PeptideMhcMatrix()
+    elif args.subst_matrix == 'fast_levenshtein':
+        subst_matrix = None
     else:
         subst_matrix = BioMatrix(args.subst_matrix)
 
-    min_v, max_v = subst_matrix.get_min_max_matrix_values()
-    msg = 'Using matrix: %s; min and max values: %s and %s' % (args.subst_matrix, min_v, max_v)
-    logger.log(msg,onlyIfVerbose=False)
-
-    insdel = CharacterInsDel(args.del_cost, args.ins_cost)
-    levenshtein = FullyWeightedLevenshtein(subst_matrix, insdel, logger)
-    seq_calc = SequenceDistanceCalculator(levenshtein, v_j_cost_calculator, logger)
+    # min_v, max_v = subst_matrix.get_min_max_matrix_values()
+    # msg = 'Using matrix: %s; min and max values: %s and %s' % (args.subst_matrix, min_v, max_v)
+    # logger.log(msg,onlyIfVerbose=False)
+    #
+    # insdel = CharacterInsDel(args.del_cost, args.ins_cost)
+    # levenshtein = FullyWeightedLevenshtein(subst_matrix, insdel, logger)
+    # seq_calc = SequenceDistanceCalculator(levenshtein, v_j_cost_calculator, logger)
+    if subst_matrix is None:
+        seq_calc = _create_fast_levenshtein_calculator(v_j_cost_calculator, logger)
+    else:
+        seq_calc = _create_default_levenshtein_calculator(args, subst_matrix, v_j_cost_calculator, logger)
 
     logger.log('Clustering sequences...', includeTimestamp=True, onlyIfVerbose=False)
     seq_matrix = PairwiseDistanceMatrix(seq_pairs, seq_calc)
@@ -54,3 +61,18 @@ def run(args, logger):
     if args.outfile is None:
         import matplotlib.pyplot as plt
         plt.show()
+
+def _create_default_levenshtein_calculator(args, subst_matrix, v_j_cost_calculator, logger):
+    min_v, max_v = subst_matrix.get_min_max_matrix_values()
+    msg = 'Using matrix: %s; min and max values: %s and %s' % (args.subst_matrix, min_v, max_v)
+    logger.log(msg,onlyIfVerbose=False)
+
+    insdel = CharacterInsDel(args.del_cost, args.ins_cost)
+    levenshtein = FullyWeightedLevenshtein(subst_matrix, insdel, logger)
+    seq_calc = SequenceDistanceCalculator(levenshtein, v_j_cost_calculator, logger)
+    return seq_calc
+
+def _create_fast_levenshtein_calculator(v_j_cost_calculator, logger):
+    levenshtein = FastLevenshteinCalculator()
+    seq_calc = SequenceDistanceCalculator(levenshtein, v_j_cost_calculator, logger)
+    return seq_calc

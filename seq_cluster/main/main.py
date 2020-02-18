@@ -8,7 +8,7 @@ from Logger import StdOutLogger
 #C:/tmp/seq_cluster/iris_rep.txt "Chain: TRB (1)" -v "TRB - V gene (1)" -j "TRB - J gene (1)" -y 2 -i 1 -n "Clonotype ID" -n "Donor (Name)" -c 1.1 -d 1.1 -m blosum62
 
 #C:/tmp/seq_cluster/iris_rep_subset.txt "Chain: TRB (1)" -v "TRB - V gene (1)" -j "TRB - J gene (1)" -y 15 -i 10 -n "Clonotype ID" -n "Donor (Name)" -n "TRB - V gene (1)" -n "TRB - J gene (1)" -z "40,40,4"
-
+#C:/tmp/seq_cluster/iris_rep.txt "Chain: TRB (1)" -v "TRB - V gene (1)" -j "TRB - J gene (1)" -y 2 -i 1 -n "Clonotype ID" -n "Donor (Name)" -c 1.1 -d 1.1 -m fast_levenshtein
 logger = StdOutLogger(verbose=False)
 
 cmd_args = create_arguments()

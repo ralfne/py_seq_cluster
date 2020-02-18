@@ -49,6 +49,7 @@ def create_arguments():
 def possibly_show_matrices_for_argument(args, logger):
     if args.infile == 'show' and args.sequence_col == 'matrices':
         logger.log('identity_matrix')
+        logger.log('fast_levenshtein (basic levenshtein, Cython implementation)')
         for m in biomat.available_matrices:
             logger.log(str(m))
         logger.log('peptide_mhc_matrix (from  doi: 10.1186/1471-2105-10-394)')
