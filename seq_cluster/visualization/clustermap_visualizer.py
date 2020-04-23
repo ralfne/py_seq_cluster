@@ -1,13 +1,10 @@
 import ntpath
 import os
-
 import pandas as pd, seaborn as sns
 import scipy.spatial as sp, scipy.cluster.hierarchy as hc
-from Logger import StdOutLogger
-from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
 import numpy as np
-
+from logger.Logger import StdOutLogger
 from seq_cluster.clustering.pairwise_distance_matrix import PairwiseDistanceMatrix
 
 
@@ -70,7 +67,18 @@ class ClustermapVisualizer(object):
             array = np.arange(l)
             i = 0
             for key, row in self._distance_dataframe.iterrows():
-                array[i]=key
+                value = None
+                parts = key.split('_')
+                if len(parts)==1:
+                    value = key
+                else:
+                    for p in parts:
+                        if unicode(p).isnumeric():
+                            value=p
+                            break
+                    if value is None:
+                        value = -1
+                array[i] = value
                 i += 1
             fn = os.path.join(filename, ClustermapVisualizer._KEYS_FILENAME)
             np.save(fn, array)

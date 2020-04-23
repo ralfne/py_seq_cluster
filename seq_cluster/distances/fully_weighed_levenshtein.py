@@ -19,7 +19,7 @@
 # SOFTWARE.
 from copy import deepcopy
 
-from Logger import StdOutLogger
+from logger.Logger import StdOutLogger
 
 from seq_cluster.distances.peptide_mhc_matrix import PeptideMhcMatrix
 

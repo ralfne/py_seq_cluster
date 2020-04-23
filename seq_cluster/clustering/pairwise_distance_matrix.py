@@ -1,11 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 import Bio.SubsMat.MatrixInfo as biomat
-from similarity.levenshtein import Levenshtein
 import pandas as pd
 import numpy as np
-from similarity.weighted_levenshtein import WeightedLevenshtein
-from similarity.weighted_levenshtein import CharacterSubstitutionInterface
 
 
 class PairwiseDistanceMatrix(object):
@@ -25,35 +22,55 @@ class PairwiseDistanceMatrix(object):
         pair.set_distance(dist)
 
     def get_as_dataframe(self):
-        names = self._get_unique_names()
-        data = []
-        for row_name in names:
-            row = []
-            for col_name in names:
-                if row_name  == col_name:
-                    v = 0
-                else:
-                    v = self._get_distance(row_name, col_name)
-                row.append(v)
-            data.append(row)
-        out = pd.DataFrame(data=data, index=deepcopy(names), columns=deepcopy(names))
+        unique_names = {}
+        for item in self._pairwise_comparisons:
+            unique_names[item._item1.name] = item._item1.name
+            unique_names[item._item2.name] = item._item2.name
+        names_dict = {}
+        names_list = []
+        for i, v in enumerate(unique_names.values()):
+            names_dict[v] = i
+            names_list.append(v)
+        l = len(names_dict)
+        data = np.zeros((l, l))
+        for item in self._pairwise_comparisons:
+            i1 = names_dict.get(item._item1.name)
+            i2 = names_dict.get(item._item2.name)
+            data[i1][i2] = item.get_distance()
+            data[i2][i1] = item.get_distance()
+        out = pd.DataFrame(data=data, index=names_list, columns=names_list)
         return out
 
-    def _get_distance(self, name1, name2):
-        for p in self._pairwise_comparisons:
-            if p.matches(name1, name2, respect_ordering=False):
-                return p.get_distance()
-        return None
-
-    def _get_unique_names(self):
-        item1 = self._pairwise_comparisons[0].get_item1()
-        out = [item1.name]
-        for p in self._pairwise_comparisons:
-            item1 = p.get_item1()
-            item2 = p.get_item2()
-            if item1.name == out[0]:
-                out.append(item2.name)
-        return out
+    # def get_as_dataframe(self):
+    #     names = self._get_unique_names()
+    #     data = []
+    #     for row_name in names:
+    #         row = []
+    #         for col_name in names:
+    #             if row_name  == col_name:
+    #                 v = 0
+    #             else:
+    #                 v = self._get_distance(row_name, col_name)
+    #             row.append(v)
+    #         data.append(row)
+    #     out = pd.DataFrame(data=data, index=deepcopy(names), columns=deepcopy(names))
+    #     return out
+    #
+    # def _get_distance(self, name1, name2):
+    #     for p in self._pairwise_comparisons:
+    #         if p.matches(name1, name2, respect_ordering=False):
+    #             return p.get_distance()
+    #     return None
+    #
+    # def _get_unique_names(self):
+    #     item1 = self._pairwise_comparisons[0].get_item1()
+    #     out = [item1.name]
+    #     for p in self._pairwise_comparisons:
+    #         item1 = p.get_item1()
+    #         item2 = p.get_item2()
+    #         if item1.name == out[0]:
+    #             out.append(item2.name)
+    #     return out
 
     @staticmethod
     def combine(lower_triangle_distance_dataframe, upper_triangle_distance_dataframe):

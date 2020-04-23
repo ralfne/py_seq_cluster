@@ -8,4 +8,5 @@ matplotlib==1.5.1
 Bio==0.1.0
 Logger==1.4
 scikit_learn==0.22.1
-similarity==0.0.1
+python_Levenshtein_wheel
+biopython

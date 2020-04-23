@@ -1,5 +1,6 @@
+from logger.Logger import StdOutLogger
+
 from seq_cluster.main.arguments import create_arguments, possibly_show_matrices_for_argument
-from Logger import StdOutLogger
 
 #https://stats.stackexchange.com/questions/398336/fixing-the-maximum-distance-within-a-cluster
 
@@ -9,6 +10,8 @@ from Logger import StdOutLogger
 
 #C:/tmp/seq_cluster/iris_rep_subset.txt "Chain: TRB (1)" -v "TRB - V gene (1)" -j "TRB - J gene (1)" -y 15 -i 10 -n "Clonotype ID" -n "Donor (Name)" -n "TRB - V gene (1)" -n "TRB - J gene (1)" -z "40,40,4"
 #C:/tmp/seq_cluster/iris_rep.txt "Chain: TRB (1)" -v "TRB - V gene (1)" -j "TRB - J gene (1)" -y 2 -i 1 -n "Clonotype ID" -n "Donor (Name)" -c 1.1 -d 1.1 -m fast_levenshtein
+#C:/tmp/seq_cluster/tra_trb_test_local/iris_report_truncated.txt "Chain: TRA (1)" "Chain: TRB (1)" -n "Clonotype ID"  -m fast_levenshtein -o C:/tmp/seq_cluster/tra_trb_test_local
+
 logger = StdOutLogger(verbose=False)
 
 cmd_args = create_arguments()
@@ -21,4 +24,4 @@ possibly_show_matrices_for_argument(cmd_args, logger)
 logger.log('Starting sequence clustering...', includeTimestamp=True, onlyIfVerbose=False)
 from seq_cluster.main.execution import run
 run(cmd_args, logger)
-logger.log('Sequence clustering done.', includeTimestamp=True,onlyIfVerbose=False)
+logger.log('Sequence clustering done.', includeTimestamp=True, onlyIfVerbose=False)

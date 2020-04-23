@@ -13,8 +13,9 @@ from seq_cluster.visualization.clustermap_visualizer import ClustermapVisualizer
 
 def run(args, logger):
     logger.log('Loading sequences...', includeTimestamp=True, onlyIfVerbose=False)
-    ds = Dataset(args.infile, sequence_col=args.sequence_col, name_cols=args.name,
+    ds = Dataset(args.infile, sequence1_col=args.sequence1_col, sequence2_col=args.sequence2_col, name_cols=args.name,
             v_genes_col=args.v_gene, j_genes_col=args.j_gene, aux_col=args.aux)
+    logger.log('Initializing pairs...', includeTimestamp=True, onlyIfVerbose=False)
     seq_pairs, aux_pairs = ds.get_pairwise()
     v_j_cost_calculator = VJCostCalculator(unequal_v_gene_cost=args.v_gene_cost,
                                             unequal_j_gene_cost=args.j_gene_cost)
@@ -40,8 +41,9 @@ def run(args, logger):
     else:
         seq_calc = _create_default_levenshtein_calculator(args, subst_matrix, v_j_cost_calculator, logger)
 
-    logger.log('Clustering sequences...', includeTimestamp=True, onlyIfVerbose=False)
+    logger.log('Calculating pairwise distances...', includeTimestamp=True, onlyIfVerbose=False)
     seq_matrix = PairwiseDistanceMatrix(seq_pairs, seq_calc)
+    logger.log('Formatting pairwise distances...', includeTimestamp=True, onlyIfVerbose=False)
     seq_df = seq_matrix.get_as_dataframe()
 
     aux_df = None

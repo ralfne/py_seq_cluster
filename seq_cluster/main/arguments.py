@@ -7,8 +7,10 @@ def create_arguments():
     parser.add_argument('infile', type=str, metavar='',
                         help='Input filename of the tab-separated data file; '
                              'use "show matrices" to display all available matrices.')
-    parser.add_argument('sequence_col', type=str, metavar='',
-                        help='Column name for the sequence clustering parameter')
+    parser.add_argument('sequence1_col', type=str, metavar='',
+                        help='Column name for the sequence_1 clustering parameter')
+    parser.add_argument('sequence2_col', type=str, metavar='', default='',
+                        help='Column name for the sequence_2 clustering parameter (enter "" if not used)')
     parser.add_argument('-n', '--name', action='append', metavar='',
                         help='Column name specifying the item name. Multiple -n options are supported; '
                              'the resulting values will be concatenated')
