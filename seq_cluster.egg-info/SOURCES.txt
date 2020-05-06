@@ -43,6 +43,7 @@ seq_cluster/data/data_set.py
 seq_cluster/distances/__init__.py
 seq_cluster/distances/bio_matrix.py
 seq_cluster/distances/distance_matrix.py
+seq_cluster/distances/fast_levenshtein_calculator.py
 seq_cluster/distances/fully_weighed_levenshtein.py
 seq_cluster/distances/identity_distance_matrix.py
 seq_cluster/distances/peptide_mhc_matrix.py

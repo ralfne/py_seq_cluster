@@ -17,3 +17,9 @@ class IdentityDistanceMatrix(DistanceMatrix):
                 else:
                     out[key] = 1
         return out
+
+    def get_distance(self, aa1, aa2):
+        key = (aa1, aa2)
+        out = self._data.get(key, None)
+        if out is None: raise ValueError('Key not found: ' + str(key))
+        return out

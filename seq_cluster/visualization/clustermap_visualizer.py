@@ -9,7 +9,8 @@ from seq_cluster.clustering.pairwise_distance_matrix import PairwiseDistanceMatr
 
 
 class ClustermapVisualizer(object):
-    _FIGURE_FILENAME = 'figure.png'
+    _FIGURE_FILENAME_SVG = 'figure.svg'
+    _FIGURE_FILENAME_PNG = 'figure.png'
     _KEYS_FILENAME = 'keys.npy'
     _LINKAGE_FILENAME = 'linkage.npy'
     _LINKAGE_AUX_FILENAME = 'linkage_aux.npy'
@@ -93,9 +94,11 @@ class ClustermapVisualizer(object):
 
     def _possibly_save_plot(self, cm, filename):
         if filename is not None:
-            fn = os.path.join(filename, ClustermapVisualizer._FIGURE_FILENAME)
+            fn_png = os.path.join(filename, ClustermapVisualizer._FIGURE_FILENAME_PNG)
+            fn_svg = os.path.join(filename, ClustermapVisualizer._FIGURE_FILENAME_SVG)
             fig = cm.fig
-            fig.savefig(fn)
+            fig.savefig(fn_png)
+            fig.savefig(fn_svg)
 
     def _scale(self, fig):
         if self._scaling is not None:

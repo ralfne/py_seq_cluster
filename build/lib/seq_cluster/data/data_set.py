@@ -5,9 +5,10 @@ import pandas as pd
 
 
 class ComparisonItem(object):
-    def __init__(self, name, seq=None, v_gene=None, j_gene=None, aux=None):
+    def __init__(self, name, seq1=None, seq2=None, v_gene=None, j_gene=None, aux=None):
         self.name = name
-        self.sequence = seq
+        self.sequence1 = seq1
+        self.sequence2 = seq2
         self.v_gene = v_gene
         self.j_gene = j_gene
         self.aux = aux
@@ -20,7 +21,7 @@ class ComparisonItem(object):
 
 
 class PairwiseComparison(object):
-    def __init__(self,item1, item2):
+    def __init__(self, item1, item2):
         self._item1 = item1
         self._item2 = item2
         self._distance = None
@@ -47,10 +48,13 @@ class PairwiseComparison(object):
 
 
 class Dataset(object):
-    def __init__(self, filename, sequence_col, name_cols=None, v_genes_col=None, j_genes_col= None, aux_col=None):
+    def __init__(self, filename, sequence1_col, sequence2_col, name_cols=None, v_genes_col=None, j_genes_col= None, aux_col=None):
         self._data = pd.read_csv(filename, sep='\t')
-        self._sequence_col = sequence_col
-        self._sequence_col_index = None
+        self._sequence1_col = sequence1_col
+        self._sequence1_col_index = None
+        self._sequence2_col = sequence2_col
+        if self._sequence2_col == '': self._sequence2_col = None
+        self._sequence2_col_index = None
         self._name_cols = name_cols
         self._aux_col = aux_col
         self._v_genes_col = v_genes_col
@@ -66,16 +70,24 @@ class Dataset(object):
             if len(tmp) != len(self._data):
                 raise ValueError('Error: Name columns do not define unique row names.')
 
-    def get_sequences(self, row_index):
-        # row = self._data.iloc[row_index]
-        # out =row[self._sequence_col]
-        out = self._data.iloc[row_index, self._get_sequence_col_index()]
+    def get_sequences1(self, row_index):
+        out = self._data.iloc[row_index, self._get_sequence1_col_index()]
         return out
 
-    def _get_sequence_col_index(self):
-        if self._sequence_col_index is  None:
-            self._sequence_col_index = self._data.columns.get_loc(self._sequence_col)
-        return self._sequence_col_index
+    def get_sequences2(self, row_index):
+        if self._sequence2_col is None: return None
+        out = self._data.iloc[row_index, self._get_sequence2_col_index()]
+        return out
+
+    def _get_sequence1_col_index(self):
+        if self._sequence1_col_index is  None:
+            self._sequence1_col_index = self._data.columns.get_loc(self._sequence1_col)
+        return self._sequence1_col_index
+
+    def _get_sequence2_col_index(self):
+        if self._sequence2_col_index is  None:
+            self._sequence2_col_index = self._data.columns.get_loc(self._sequence2_col)
+        return self._sequence2_col_index
 
     def get_aux(self, row_index):
         row = self._data.iloc[row_index]
@@ -132,9 +144,10 @@ class Dataset(object):
         return seq_out, aux_out
 
     def _create_sequence_comparison_item(self, row_index):
-        seq = self.get_sequences(row_index)
+        seq1 = self.get_sequences1(row_index)
+        seq2 = self.get_sequences2(row_index)
         name = self.get_name(row_index)
         v_gene = self.get_v_gene(row_index)
         j_gene = self.get_j_gene(row_index)
-        out = ComparisonItem(name, seq, v_gene, j_gene, None)
+        out = ComparisonItem(name, seq1, seq2, v_gene, j_gene, None)
         return out

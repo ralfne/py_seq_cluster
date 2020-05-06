@@ -5,7 +5,7 @@ from glob import glob
 
 setup(
     name='seq_cluster',
-    version='0.6',
+    version='0.7',
     packages=['seq_cluster', 'seq_cluster/clustering', 'seq_cluster/data', 'seq_cluster/distances',
               'seq_cluster/distances/matrices', 'seq_cluster/main', 'seq_cluster/visualization'],
     package_data={'seq_cluster/distances': ['matrices/*']},
