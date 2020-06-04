@@ -55,10 +55,12 @@ def run(args, logger):
     logger.log('Running clustermap...', includeTimestamp=True, onlyIfVerbose=False)
 
     fig_sizes = args.fig_size.split(',')
+    colormap_fsize=args.colorbar_fontsize
 
     viz = ClustermapVisualizer(seq_df, args.seq_linkage, aux_df, args.aux_linkage, scaling=0.2,
                                fig_size_x=int(fig_sizes[0].strip()), fig_size_y=int(fig_sizes[1].strip()),
                                 fig_size_font=int(fig_sizes[2].strip()))
+    viz.set_colormap_fontsize(colormap_fsize)
     viz.run(title=None, filename=args.outfile)
     if args.outfile is None:
         import matplotlib.pyplot as plt

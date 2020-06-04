@@ -17,7 +17,7 @@ class ClustermapVisualizer(object):
 
     def __init__(self, distance_dataframe, linkage_method, distance_dataframe_aux=None,
                  linkage_method_aux=None, scaling=None,
-                 fig_size_x=20, fig_size_y=20,fig_size_font=10, logger=StdOutLogger()):
+                 fig_size_x=20, fig_size_y=20, fig_size_font=10, logger=StdOutLogger()):
         self._logger = logger
         self._linkage_method = linkage_method
         self._distance_dataframe = distance_dataframe
@@ -27,6 +27,9 @@ class ClustermapVisualizer(object):
         self._fig_size_x = fig_size_x
         self._fig_size_y = fig_size_y
         self._fig_size_font = fig_size_font
+
+    def set_colormap_fontsize(self, size):
+        self._colorbar_fontsize = size
 
     def run(self, title=None, filename=None):
         df = self._distance_dataframe
@@ -44,6 +47,12 @@ class ClustermapVisualizer(object):
             df = PairwiseDistanceMatrix.combine(self._distance_dataframe, self._distance_dataframe_aux)
         cm = sns.clustermap(df, row_linkage=linkage, col_linkage=linkage_aux,
                             figsize=(self._fig_size_x, self._fig_size_y))
+        if self._colorbar_fontsize is not None:
+            cbar = cm.fig.axes[2].collections[0].colorbar
+            cbar.ax.tick_params(labelsize=self._colorbar_fontsize)
+        #cbar_kws = {"shrink": 0.1}, 'orientation':'horizontal', "use_gridspec": False
+        # colorbar
+        #cm.fig.colorbar(ax.get_children()[0], cax=cax, orientation="horizontal")
 
         cm.ax_heatmap.set_xticklabels(cm.ax_heatmap.get_xmajorticklabels(), fontsize=self._fig_size_font)
 

@@ -41,6 +41,9 @@ def create_arguments():
     parser.add_argument('-z', '--fig_size', default='20,20,10', type=str, metavar='',
                         help="Figure size string, encoded as 'x,y, labels_font_size'.")
 
+    parser.add_argument('-f', '--colorbar_fontsize', default=None, type=str, metavar='',
+                        help="")
+
     args = parser.parse_args()
     if args.v_gene is not None and args.v_gene_cost is None:
         raise ValueError('Both, or none, of --v_gene and --v_gene_cost must be specified')
